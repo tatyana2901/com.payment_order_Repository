@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление платежного поручения</title>
+</head>
+<body>
+<form action="/added">
+    Введите реквизиты платежа:
+    <br>
+    <label> Дата<input type="date" name="data" required> </label>
+    <br>
+    <label> Получатель<input type="text" name="recipient" required> </label>
+    <br>
+    <label>Сумма<input type="number" name="sum" required></label>
+    <br>
+    <label for="purpose-select" > Назначение платежа </label>
+    <select name="purpose" id="purpose-select" required>
+        <option value="">-- Выберите назначение --</option>
+        <option value="SUPPLIER_PAYMENT">Оплата поставщику</option>
+        <option value="TAX">Налоги</option>
+        <option value="BANK_TRANSACTION">Банковские платежи</option>
+        <option value="SALARY">Зарплата</option>
+    </select>
+    <br>
+    <input type="submit" value="Добавить платежное поручение">
+</form>
+</body>
+</html>
+
