@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table border="1" style="width:300px">
+    <tr>
+        <th>Получатель</th>
+        <th>Сумма</th>
+    </tr>
+    <tr th:each="m : ${map}">
+        <td th:text="${m.key}">key</td>
+        <td th:text="${m.value}">value</td>
+    </tr>
+</table>
+
+
+</body>
+</html>

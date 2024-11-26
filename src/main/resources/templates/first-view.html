@@ -1,10 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+
+<table border="1" style="width:300px">
+    <tr>
+        <th>id</th>
+        <th>Номер документа</th>
+        <th>Дата</th>
+        <th>Получатель</th>
+        <th>Сумма</th>
+        <th>Назначение платежа</th>
+    </tr>
+    <tr th:each="line : ${tab_lines}">
+
+        <td><span th:text="${line.id}"/></td>
+        <td><span th:text="${line.number}"/></td>
+        <td><span th:text="${line.date}"/></td>
+        <td><span th:text="${line.recipient}"/></td>
+        <td><span th:text="${line.sum}"/></td>
+        <td><span th:text="${line.purpose}"/></td>
+
+    </tr>
+</table>
+
 <a href="enter-new-pay.html"> Добавить платежное поручение </a>
+<br>
+<br>
+<a href="report_by_recipient.html"> <button> Свод платежей по получателю </button></a>
+<br>
+<br>
+<a href="report_by_purpose.html"> <button> Свод платежей по назначению </button></a>
 </body>
 </html>

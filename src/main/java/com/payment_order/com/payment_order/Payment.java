@@ -9,14 +9,16 @@ public class Payment {
     private LocalDate date;  ////????
     private Double sum;
     private Enum purpose;
+    private int number;
     private int id;
 
 
-    public Payment(String recipient, LocalDate date, Double sum, Enum purpose) {
+    public Payment(String recipient, LocalDate date, Double sum, Enum purpose, int number) {
         this.recipient = recipient;
         this.date = date;
         this.sum = sum;
         this.purpose = purpose;
+        this.number = number;
         count++;
         id = count;
     }
@@ -28,8 +30,13 @@ public class Payment {
                 ", date=" + date +
                 ", sum=" + sum +
                 ", purpose=" + purpose +
+                ", number=" + number +
                 ", id=" + id +
                 '}';
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     public int getId() {
