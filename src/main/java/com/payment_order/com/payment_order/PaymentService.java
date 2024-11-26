@@ -88,8 +88,8 @@ public class PaymentService {
 
     }
 
-    public boolean ifNumberUnique(int number) {
-        return pays.stream().noneMatch(payment -> payment.getNumber() == number);
+    public boolean ifNumberUnique(String number) {
+        return pays.stream().noneMatch(payment -> payment.getNumber() == Integer.parseInt(number));
     }
 
 
@@ -97,12 +97,15 @@ public class PaymentService {
         String fname = "payments.txt";
         Path file = Paths.get(fname);
         List<String> lines = Files.readAllLines(file);
-        lines.stream().map(s -> {
-            String[] strs = s.split(";");
-         /*   if (ifNumberUnique(Integer.parseInt(strs[0]))) */
-                String[] st = strs[1].split("-");
-                return new Payment(strs[3], LocalDate.of(Integer.parseInt(st[0]), Integer.parseInt(st[1]), Integer.parseInt(st[2])), Double.parseDouble(strs[2]), parsePurpose(strs[4]), Integer.parseInt(strs[0]));
-            }).forEach(payment -> pays.add(payment));
+        lines
+                .stream()
+                .filter(s -> ifNumberUnique(s.substring(0, s.indexOf(";"))))
+                .map(s -> {
+                    String[] strs = s.split(";");
+                    String[] st = strs[1].split("-");
+                    return new Payment(strs[3], LocalDate.of(Integer.parseInt(st[0]), Integer.parseInt(st[1]), Integer.parseInt(st[2])), Double.parseDouble(strs[2]), parsePurpose(strs[4]), Integer.parseInt(strs[0]));
+                })
+                .forEach(payment -> pays.add(payment));
 
     }
 
