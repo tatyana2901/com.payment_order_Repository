@@ -3,7 +3,9 @@ package com.payment_order.com.payment_order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.IOException;
 import java.util.Map;
 
 @org.springframework.stereotype.Controller
@@ -32,21 +34,27 @@ public class Controller {
 
     @GetMapping("/report_by_recipient.html")
     public String getRecipientReport(Model model) {
-
-        var report = ps.getSumByRecipMap();
-
-        model.addAttribute("map",report);
-        //System.out.println(report.entrySet());
-
-
-
+        var report = ps.getSumByRecip();
+        model.addAttribute("map", report);
         return "report_by_recipient";
     }
 
     @GetMapping("/report_by_purpose.html")
-    public String getPurposeReport() {
+    public String getPurposeReport(Model model) {
+        var report = ps.getSumByPurp();
+        model.addAttribute("map", report);
+        return "report_by_purpose";
+    }
 
-       return "report_by_purpose";
+    @PostMapping("/load")
+    public String upLoadPays() throws IOException {
+
+
+        System.out.println("КОНТРОЛЛЕР РАБОТАЕТ");
+        ps.load();
+
+
+        return "redirect:/";
     }
 
 
