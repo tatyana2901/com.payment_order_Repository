@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -21,6 +22,8 @@ import java.util.stream.Stream;
 public class PaymentService {
 
     List<Payment> pays = new ArrayList<>();
+    Map<String, Double> sumByRecip = new HashMap<>();
+    Map<Enum, Double> sumByPurp = new HashMap<>();
 
 
     public PaymentService() {
@@ -38,7 +41,7 @@ public class PaymentService {
     }
 
     public Map getSumByRecip() {
-        Map<String, Double> sumByRecip =
+        sumByRecip =
                 pays.stream()
                         .collect(Collectors.toMap((Payment::getRecipient), (Payment::getSum), Double::sum
                         ));
@@ -47,11 +50,11 @@ public class PaymentService {
     }
 
     public Map getSumByPurp() {
-        Map<Enum, Double> sumByRecip =
+        sumByPurp =
                 pays.stream()
                         .collect(Collectors.toMap((Payment::getPurpose), (Payment::getSum), Double::sum
                         ));
-        return sumByRecip;
+        return sumByPurp;
 
     }
     /*public Map getSumByRecipMap() {
@@ -109,15 +112,23 @@ public class PaymentService {
 
     }
 
-    public void save() throws IOException {
-        String fname = "saved_payments.txt";
-        List<String> lines= pays.stream().map(new Function<Payment, String>() {
-            @Override
-            public String apply(Payment payment) {
-                return payment.getNumber() + ";" + payment.getDate() + ";" + payment.getSum() + ";" + payment.getRecipient() + ";" + payment.getPurpose();
-
-            }
-        }).toList();
+    public void save(String typeOfReport) throws IOException {
+        String fname = null;
+        List<String> lines = null;
+        switch (typeOfReport) {
+            case "general":
+                fname = "saved_payments.txt";
+                lines = pays.stream().map(payment -> payment.getNumber() + ";" + payment.getDate() + ";" + payment.getSum() + ";" + payment.getRecipient() + ";" + payment.getPurpose()).toList();
+                break;
+            case "by_purpose":
+                fname = "payments_by_purpose.txt";
+                lines = sumByPurp.entrySet().stream().map(enumDoubleEntry -> enumDoubleEntry.getKey().toString() + ";" + enumDoubleEntry.getValue().toString()).toList();
+                break;
+            case "by_recip":
+                fname = "payments_by_recipient.txt";
+                lines = sumByRecip.entrySet().stream().map(x -> x.getKey() + ";" + x.getValue().toString()).toList();
+                break;
+        }
         Path file = Paths.get(fname);
         Files.write(file, lines, StandardCharsets.UTF_8);
     }

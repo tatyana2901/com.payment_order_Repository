@@ -59,21 +59,45 @@ public class Controller {
     public String saveToFile(Model model) {
         goToFirstView(model);
         try {
-            ps.save();
-            model.addAttribute("result","Выгрузка успешно завершена.");
+            ps.save("general");
+            model.addAttribute("result", "Выгрузка успешно завершена.");
         } catch (IOException e) {
-            model.addAttribute("result",e.getMessage());
+            model.addAttribute("result", e.getMessage());
         }
 
         return "first-view";
     }
-   /* @GetMapping("/test.html")
+
+    @PostMapping("/savepurp")
+    public String saveByPurp(Model model) {
+        getPurposeReport(model);
+        try {
+            ps.save("by_purpose");
+            model.addAttribute("purpres", "Выгрузка успешно завершена.");
+        } catch (IOException e) {
+            model.addAttribute("purpres", e.getMessage());
+        }
+        return "report_by_purpose";
+    }
+
+    @PostMapping("/saverecip")
+    public String saveByRecip(Model model) {
+        getRecipientReport(model);
+        try {
+            ps.save("by_recip");
+            model.addAttribute("recres", "Выгрузка успешно завершена.");
+        } catch (IOException e) {
+            model.addAttribute("recres", e.getMessage());
+        }
+        return "report_by_recipient";
+    }
+
+
+    @GetMapping("/test.html")
     public String ts (
     ){
         return "test";
-    }*/
-
-
+    }
 
 
 }
