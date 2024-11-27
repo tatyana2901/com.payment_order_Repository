@@ -3,6 +3,7 @@ package com.payment_order.com.payment_order;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -85,7 +86,6 @@ public class PaymentService {
             default -> null;
         };
 
-
     }
 
     public boolean ifNumberUnique(String number) {
@@ -107,6 +107,19 @@ public class PaymentService {
                 })
                 .forEach(payment -> pays.add(payment));
 
+    }
+
+    public void save() throws IOException {
+        String fname = "saved_payments.txt";
+        List<String> lines= pays.stream().map(new Function<Payment, String>() {
+            @Override
+            public String apply(Payment payment) {
+                return payment.getNumber() + ";" + payment.getDate() + ";" + payment.getSum() + ";" + payment.getRecipient() + ";" + payment.getPurpose();
+
+            }
+        }).toList();
+        Path file = Paths.get(fname);
+        Files.write(file, lines, StandardCharsets.UTF_8);
     }
 
 

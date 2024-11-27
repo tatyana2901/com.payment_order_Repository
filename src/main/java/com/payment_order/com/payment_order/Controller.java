@@ -52,10 +52,28 @@ public class Controller {
 
         System.out.println("КОНТРОЛЛЕР РАБОТАЕТ");
         ps.load();
-
-
         return "redirect:/";
     }
+
+    @PostMapping("/save")
+    public String saveToFile(Model model) {
+        goToFirstView(model);
+        try {
+            ps.save();
+            model.addAttribute("result","Выгрузка успешно завершена.");
+        } catch (IOException e) {
+            model.addAttribute("result",e.getMessage());
+        }
+
+        return "first-view";
+    }
+   /* @GetMapping("/test.html")
+    public String ts (
+    ){
+        return "test";
+    }*/
+
+
 
 
 }
