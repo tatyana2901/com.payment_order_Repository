@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 public class PaymentService {
 
     List<Payment> pays = new ArrayList<>();
-    Map<String, Double> sumByRecip = new HashMap<>();
-    Map<Enum, Double> sumByPurp = new HashMap<>();
+  //  Map<String, Double> sumByRecip = new HashMap<>();
+  //  Map<Enum, Double> sumByPurp = new HashMap<>();
 
 
     public PaymentService() {
@@ -40,21 +40,19 @@ public class PaymentService {
         pays.add(new Payment(recipient, ld, Double.parseDouble(sum), Purpose.valueOf(purpose), Integer.parseInt(num)));
     }
 
-    public Map getSumByRecip() {
-        sumByRecip =
-                pays.stream()
-                        .collect(Collectors.toMap((Payment::getRecipient), (Payment::getSum), Double::sum
-                        ));
-        return sumByRecip;
+    public Map <String, Double> getSumByRecip() {
+        return pays.stream()
+                .collect(Collectors.toMap((Payment::getRecipient), (Payment::getSum), Double::sum
+                ));
 
     }
 
-    public Map getSumByPurp() {
-        sumByPurp =
+    public Map <Enum, Double> getSumByPurp() {
+        return
                 pays.stream()
                         .collect(Collectors.toMap((Payment::getPurpose), (Payment::getSum), Double::sum
                         ));
-        return sumByPurp;
+      //  return sumByPurp;
 
     }
     /*public Map getSumByRecipMap() {
@@ -122,11 +120,14 @@ public class PaymentService {
                 break;
             case "by_purpose":
                 fname = "payments_by_purpose.txt";
-                lines = sumByPurp.entrySet().stream().map(enumDoubleEntry -> enumDoubleEntry.getKey().toString() + ";" + enumDoubleEntry.getValue().toString()).toList();
+                lines = getSumByPurp().entrySet().stream().map(enumDoubleEntry -> enumDoubleEntry.getKey().toString() + ";" + enumDoubleEntry.getValue().toString()).toList();
                 break;
             case "by_recip":
                 fname = "payments_by_recipient.txt";
-                lines = sumByRecip.entrySet().stream().map(x -> x.getKey() + ";" + x.getValue().toString()).toList();
+                lines = getSumByRecip().entrySet()
+                        .stream()
+                        .map(x -> x.getKey() + ";" + x.getValue().toString())
+                        .toList();
                 break;
         }
         Path file = Paths.get(fname);
