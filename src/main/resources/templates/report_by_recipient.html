@@ -10,9 +10,9 @@
         <th>Получатель</th>
         <th>Сумма</th>
     </tr>
-    <tr th:each="m : ${map}">
-        <td th:text="${m.key}">key</td>
-        <td th:text="${m.value}">value</td>
+    <tr th:each="m : ${report}">
+        <td th:text="${m.recipient}"></td>
+        <td th:text="${m.total}"></td>
     </tr>
 </table>
 <br>

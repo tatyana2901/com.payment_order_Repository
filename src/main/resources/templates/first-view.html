@@ -23,21 +23,36 @@
         <td><span th:text="${line.recipient}"/></td>
         <td><span th:text="${line.sum}"/></td>
         <td><span th:text="${line.purpose}"/></td>
+        <td>
+           <!-- <a th:href="@{/delete(id = ${line.id})}">
+               <button>Удалить</button>
+            </a>ТАК ТОЖЕ МОЖНО!!!!-->
+            <a th:href="@{'/deletePay?id=' + ${line.id}}"> <button>Удалить</button></a>
+        </td>
+
+
+            <!--  <td><a th:href="@{/delete(id = ${line.id})}"> Удалить </a></td>-->
 
     </tr>
 </table>
 <br>
-<form action="/save" method="post"><button>Выгрузить журнал платежей</button></form>
+<form action="/save" method="post">
+    <button>Выгрузить журнал платежей</button>
+</form>
 <span th:text="${result}"></span>
 <br>
 <a href="enter-new-pay.html"> Добавить платежное поручение </a>
 <br>
 <br>
-<form action="/load" method="post"><button>Загрузить платежи из файла</button></form>
+<!--<form action="/load" method="post"><button>Загрузить платежи из файла</button></form>-->
 <br>
-<a href="report_by_recipient.html"> <button> Свод платежей по получателю </button></a>
+<a href="report_by_recipient.html">
+    <button> Свод платежей по получателю</button>
+</a>
 <br>
 <br>
-<a href="report_by_purpose.html"> <button> Свод платежей по назначению </button></a>
+<a href="report_by_purpose.html">
+    <button> Свод платежей по назначению</button>
+</a>
 </body>
 </html>

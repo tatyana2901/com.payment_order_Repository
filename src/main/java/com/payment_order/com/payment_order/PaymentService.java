@@ -21,96 +21,32 @@ import java.util.stream.Stream;
 @Service
 public class PaymentService {
 
-    List<Payment> pays = new ArrayList<>();
-  //  Map<String, Double> sumByRecip = new HashMap<>();
-  //  Map<Enum, Double> sumByPurp = new HashMap<>();
+    /* List<Payment> pays = new ArrayList<>();*/
+    //  Map<String, Double> sumByRecip = new HashMap<>();
+    //  Map<Enum, Double> sumByPurp = new HashMap<>();
 
 
-    public PaymentService() {
-
-        pays.add(new Payment("Валя", LocalDate.of(2024, 2, 23), 1500.0, Purpose.SUPPLIER_PAYMENT, 98));
-        pays.add(new Payment("Костя", LocalDate.of(2024, 9, 1), 982.550, Purpose.SUPPLIER_PAYMENT, 32));
-        pays.add(new Payment("Валя", LocalDate.of(2024, 2, 23), 1500.0, Purpose.SALARY, 98));
-        pays.add(new Payment("Налоговая", LocalDate.of(2024, 3, 19), 898.0, Purpose.TAX, 5));
-    }
-
-    public void add(String date, String sum, String recipient, String num, String purpose) {
+    public Payment add(String date, String recipient, String sum, String num, String purpose) {
         String[] dates = date.split("-");
         LocalDate ld = LocalDate.of(Integer.parseInt(dates[0]), Integer.parseInt(dates[1]), Integer.parseInt(dates[2]));
-        pays.add(new Payment(recipient, ld, Double.parseDouble(sum), Purpose.valueOf(purpose), Integer.parseInt(num)));
+        return new Payment(0, recipient, ld, Double.parseDouble(sum), Purpose.valueOf(purpose), Integer.parseInt(num));
     }
 
-    public Map <String, Double> getSumByRecip() {
+    public Map<String, Double> getSumByRecip(List<Payment> pays) {
         return pays.stream()
                 .collect(Collectors.toMap((Payment::getRecipient), (Payment::getSum), Double::sum
                 ));
-
     }
 
-    public Map <Enum, Double> getSumByPurp() {
+    public Map<Purpose, Double> getSumByPurp(List<Payment> pays) {
         return
                 pays.stream()
                         .collect(Collectors.toMap((Payment::getPurpose), (Payment::getSum), Double::sum
                         ));
-      //  return sumByPurp;
-
-    }
-    /*public Map getSumByRecipMap() {
-        Map<String, Double> sumByRecip =
-                pays.stream()
-                        .collect(Collectors.toMap((new Function<Payment, String>() {
-                                    @Override
-                                    public String apply(Payment payment) {
-                                        return payment.getRecipient();
-                                    }
-                                }), (new Function<Payment, Double>() {
-                                    @Override
-                                    public Double apply(Payment payment) {
-                                        return payment.getSum();
-                                    }
-                                }), new BinaryOperator<Double>() {
-                                    @Override
-                                    public Double apply(Double aDouble, Double aDouble2) {
-                                        return aDouble + aDouble2;
-                                    }
-                                }
-                        ));
-        return sumByRecip;*/
-
-    public Purpose parsePurpose(String string) {
-
-        return switch (string) {
-            case "оплата поставщику" -> Purpose.SUPPLIER_PAYMENT;
-            case "оплата налогов" -> Purpose.TAX;
-            case "зарплата" -> Purpose.SALARY;
-            case "банковские операции" -> Purpose.BANK_TRANSACTION;
-            default -> null;
-        };
 
     }
 
-    public boolean ifNumberUnique(String number) {
-        return pays.stream().noneMatch(payment -> payment.getNumber() == Integer.parseInt(number));
-    }
-
-
-    public void load() throws IOException {
-        String fname = "payments.txt";
-        Path file = Paths.get(fname);
-        List<String> lines = Files.readAllLines(file);
-        lines
-                .stream()
-                .filter(s -> ifNumberUnique(s.substring(0, s.indexOf(";"))))
-                .map(s -> {
-                    String[] strs = s.split(";");
-                    String[] st = strs[1].split("-");
-                    return new Payment(strs[3], LocalDate.of(Integer.parseInt(st[0]), Integer.parseInt(st[1]), Integer.parseInt(st[2])), Double.parseDouble(strs[2]), parsePurpose(strs[4]), Integer.parseInt(strs[0]));
-                })
-                .forEach(payment -> pays.add(payment));
-
-    }
-
-    public void save(String typeOfReport) throws IOException {
+    public void save(String typeOfReport,List <Payment> pays) throws IOException {
         String fname = null;
         List<String> lines = null;
         switch (typeOfReport) {
@@ -120,11 +56,11 @@ public class PaymentService {
                 break;
             case "by_purpose":
                 fname = "payments_by_purpose.txt";
-                lines = getSumByPurp().entrySet().stream().map(enumDoubleEntry -> enumDoubleEntry.getKey().toString() + ";" + enumDoubleEntry.getValue().toString()).toList();
+                lines = getSumByPurp(pays).entrySet().stream().map(enumDoubleEntry -> enumDoubleEntry.getKey().toString() + ";" + enumDoubleEntry.getValue().toString()).toList();
                 break;
             case "by_recip":
                 fname = "payments_by_recipient.txt";
-                lines = getSumByRecip().entrySet()
+                lines = getSumByRecip(pays).entrySet()
                         .stream()
                         .map(x -> x.getKey() + ";" + x.getValue().toString())
                         .toList();

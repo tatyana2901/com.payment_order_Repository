@@ -1,26 +1,41 @@
 package com.payment_order.com.payment_order;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.Date;
 
+@Entity
+@Table(name = "payment_order")
 public class Payment {
-    public static int count = 0;
-    private String recipient;
-    private LocalDate date;  ////????
-    private Double sum;
-    private Enum purpose;
-    private int number;
+    // public static int count = 0;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column
+    private String recipient;
+    @Column
+    private LocalDate date;
+    @Column
+    private Double sum;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Purpose purpose;
+    @Column
+    private int number;
+
+    public Payment() {
+    }
 
 
-    public Payment(String recipient, LocalDate date, Double sum, Enum purpose, int number) {
+    public Payment(int id, String recipient, LocalDate date, Double sum, Purpose purpose, int number) {
+        this.id = id;
         this.recipient = recipient;
         this.date = date;
         this.sum = sum;
         this.purpose = purpose;
         this.number = number;
-        count++;
-        id = count;
     }
 
     @Override
@@ -55,7 +70,7 @@ public class Payment {
         return sum;
     }
 
-    public Enum getPurpose() {
+    public Purpose getPurpose() {
         return purpose;
     }
 
