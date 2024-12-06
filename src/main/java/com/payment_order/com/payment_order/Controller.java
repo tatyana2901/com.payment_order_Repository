@@ -17,10 +17,8 @@ import java.util.stream.Stream;
 public class Controller {
 
     @Autowired
-    @Qualifier("paymentRepository")
     PaymentRepository pr;
     @Autowired
-    @Qualifier("paymentService")
     PaymentService ps;
 
     @GetMapping("/")
@@ -44,16 +42,19 @@ public class Controller {
 
     @GetMapping("/report_by_recipient.html")
     public String getRecipientReport(Model model) {
-
         var report = pr.totalSumByRecipient();
+        var str = pr.totalSumByRecipient().stream().map((Function<SumByRecip, Object>) sumByRecip -> List.of(sumByRecip.getRecipient(),sumByRecip.getTotal())).toList();
         model.addAttribute("report", report);
+        model.addAttribute("chartData", str);
         return "report_by_recipient";
     }
 
     @GetMapping("/report_by_purpose.html")
     public String getPurposeReport(Model model) {
         var report = pr.totalSumByPurpose();
+        var str = pr.totalSumByPurpose().stream().map((Function<SumByPurpose, Object>) sumByPurpose -> List.of(sumByPurpose.getPurpose(),sumByPurpose.getTotal())).toList();
         model.addAttribute("report", report);
+        model.addAttribute("chartData",str);
         return "report_by_purpose";
     }
 
@@ -98,36 +99,9 @@ public class Controller {
     @GetMapping("/deletePay")
     public String delete(int id) {
         pr.deleteById(id);
-        /*System.out.println("РАБОТАЕТ КОНТРОЛЛЕР!!!");
-        System.out.println(id);*/
         return "redirect:/";
     }
 
-    @GetMapping("/test")
-    public String chart(Model model) {
-
-       var str = pr.totalSumByRecipient().stream().map(new Function<SumByRecip, Object>() {
-            @Override
-            public Object apply(SumByRecip sumByRecip) {
-                return List.of(sumByRecip.getRecipient(),sumByRecip.getTotal());
-            }
-        }).toList();
-
-        System.out.println("ВНИМАНИЕ ПЕЧАТЬ!!!!");
-        System.out.println(str);
-
-        List<List<Object>> list = List.of(
-                List.of("Mushrooms", 5.45),
-                List.of("Onions", 4.0),
-                List.of("Olives", 3),
-                List.of("Zucchini", 2.1),
-                List.of("Pepperoni", 5)
-        );
-        System.out.println("ВНИМАНИЕ ПЕЧАТЬ");
-        System.out.println(list);
-        model.addAttribute("chartData", str);
-        return "test";
-    }
 
 
 }

@@ -21,11 +21,6 @@ import java.util.stream.Stream;
 @Service
 public class PaymentService {
 
-    /* List<Payment> pays = new ArrayList<>();*/
-    //  Map<String, Double> sumByRecip = new HashMap<>();
-    //  Map<Enum, Double> sumByPurp = new HashMap<>();
-
-
     public Payment add(String date, String recipient, String sum, String num, String purpose) {
         String[] dates = date.split("-");
         LocalDate ld = LocalDate.of(Integer.parseInt(dates[0]), Integer.parseInt(dates[1]), Integer.parseInt(dates[2]));
