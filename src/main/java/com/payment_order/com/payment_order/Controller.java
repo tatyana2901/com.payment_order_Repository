@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 
 @org.springframework.stereotype.Controller
@@ -44,7 +46,7 @@ public class Controller {
     public String getRecipientReport(Model model) {
 
         var report = pr.totalSumByRecipient();
-         model.addAttribute("report", report);
+        model.addAttribute("report", report);
         return "report_by_recipient";
     }
 
@@ -99,6 +101,32 @@ public class Controller {
         /*System.out.println("РАБОТАЕТ КОНТРОЛЛЕР!!!");
         System.out.println(id);*/
         return "redirect:/";
+    }
+
+    @GetMapping("/test")
+    public String chart(Model model) {
+
+       var str = pr.totalSumByRecipient().stream().map(new Function<SumByRecip, Object>() {
+            @Override
+            public Object apply(SumByRecip sumByRecip) {
+                return List.of(sumByRecip.getRecipient(),sumByRecip.getTotal());
+            }
+        }).toList();
+
+        System.out.println("ВНИМАНИЕ ПЕЧАТЬ!!!!");
+        System.out.println(str);
+
+        List<List<Object>> list = List.of(
+                List.of("Mushrooms", 5.45),
+                List.of("Onions", 4.0),
+                List.of("Olives", 3),
+                List.of("Zucchini", 2.1),
+                List.of("Pepperoni", 5)
+        );
+        System.out.println("ВНИМАНИЕ ПЕЧАТЬ");
+        System.out.println(list);
+        model.addAttribute("chartData", str);
+        return "test";
     }
 
 
