@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Форма загрузки файла</title>
+</head>
+<body>
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name = "xfile">
+    <input type="submit" value="Загрузить">
+</form>
+<p th:if = "${message != null}"><span th:text="${message}"/> </p>
+<p th:if = "${size != null}">Размер файла: <span th:text="${size}"/> </p>
+<p th:if = "${errorMessage != null}"><span th:text="${errorMessage}"/> </p>
+</body>
+</html>

@@ -74,7 +74,29 @@ public class Payment {
         return purpose;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setSum(Double sum) {
+        this.sum = sum;
+    }
+
+    public void setPurpose(Purpose purpose) {
+        this.purpose = purpose;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 }
 
 
