@@ -47,7 +47,7 @@ public class Controller {
     @GetMapping("/report_by_recipient.html")
     public String getRecipientReport(Model model) {
         var report = pr.totalSumByRecipient();
-        var str = pr.totalSumByRecipient().stream().map((Function<SumByRecip, Object>) sumByRecip -> List.of(sumByRecip.getRecipient(),sumByRecip.getTotal())).toList();
+        var str = pr.totalSumByRecipient().stream().map((Function<SumByRecip, Object>) sumByRecip -> List.of(sumByRecip.getRecipient(), sumByRecip.getTotal())).toList();
         model.addAttribute("report", report);
         model.addAttribute("chartData", str);
         return "report_by_recipient";
@@ -56,9 +56,9 @@ public class Controller {
     @GetMapping("/report_by_purpose.html")
     public String getPurposeReport(Model model) {
         var report = pr.totalSumByPurpose();
-        var str = pr.totalSumByPurpose().stream().map((Function<SumByPurpose, Object>) sumByPurpose -> List.of(sumByPurpose.getPurpose(),sumByPurpose.getTotal())).toList();
+        var str = pr.totalSumByPurpose().stream().map((Function<SumByPurpose, Object>) sumByPurpose -> List.of(sumByPurpose.getPurpose(), sumByPurpose.getTotal())).toList();
         model.addAttribute("report", report);
-        model.addAttribute("chartData",str);
+        model.addAttribute("chartData", str);
         return "report_by_purpose";
     }
 
@@ -106,45 +106,41 @@ public class Controller {
         return "redirect:/";
     }
 
-    @GetMapping("/getPaysFromFile")
-    String index(){
-        System.out.println("тук-тук");
-        return "index";
+    @GetMapping("/upload_pays.html")
+    String index() {
+        // System.out.println("тук-тук");
+        return "upload_pays";
     }
 
     @PostMapping("/upload")
     public String doUpload(MultipartFile xfile, Model model) throws BiffException, IOException {
-        if(xfile==null || xfile.isEmpty()){
+        if (xfile == null || xfile.isEmpty()) {
             System.out.println("нет файла");
             model.addAttribute("message", "нет файла");
-        }
-        else{
-            System.out.println("получен файл "+xfile.getOriginalFilename());
+        } else {
+            System.out.println("получен файл " + xfile.getOriginalFilename());
             System.out.println("xfile.getSize() = " + xfile.getSize());
-            model.addAttribute("message", "получен файл "+xfile.getOriginalFilename());
+            model.addAttribute("message", "получен файл " + xfile.getOriginalFilename());
             model.addAttribute("size", xfile.getSize());
-            File file = new File("C:\\Users\\tatiana.anisimova\\OneDrive - Awara IT\\Рабочий стол\\JAVA\\"+xfile.getOriginalFilename());
-           // Path path = Path.of("C:\\Users\\tatiana.anisimova\\OneDrive - Awara IT\\Рабочий стол\\JAVA\\"+xfile.getOriginalFilename());
-          //  System.out.println(path.toString());
+            File file = File.createTempFile(xfile.getOriginalFilename(), ".xls");
             try {
                 //Сохранение файла на сервере
                 System.out.println("Сохраняем");
                 xfile.transferTo(file);
             } catch (IOException e) {
-                System.out.println("не удалось сохранить файл: "+e.getMessage());
-                model.addAttribute("errorMessage", "не удалось сохранить файл: "+e.getMessage());
+                System.out.println("не удалось сохранить файл: " + e.getMessage());
+                model.addAttribute("errorMessage", "не удалось сохранить файл: " + e.getMessage());
             }
-            System.out.println(ps.getDataFromXlsFile(file));
-
 
             //АНАЛИЗ файла
-            //Files.delete(path); //удаление файла, если он больше не нужен
+            List<Payment> list = ps.getDataFromXlsFile(file);
+            model.addAttribute("tab_lines", list);
+
+
+            System.out.println(file.delete()); //удаление файла, если он больше не нужен
         }
-        return "index";
+        return "upload_pays";
     }
-
-
-
 
 
 }
