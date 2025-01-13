@@ -18,7 +18,7 @@
 
 <table border="1" style="width:300px">
     <tr>
-        <th>id</th>
+
         <th>Номер документа</th>
         <th>Дата</th>
         <th>Получатель</th>
@@ -27,7 +27,7 @@
     </tr>
     <tr th:each="line : ${tab_lines}">
 
-        <td><span th:text="${line.id}"/></td>
+
         <td><span th:text="${line.number}"/></td>
         <td><span th:text="${line.date}"/></td>
         <td><span th:text="${line.recipient}"/></td>
@@ -37,7 +37,7 @@
             <!-- <a th:href="@{/delete(id = ${line.id})}">
                 <button>Удалить</button>
              </a>ТАК ТОЖЕ МОЖНО!!!!-->
-            <a th:href="@{'/deletePay?id=' + ${line.id}}"> <button>Удалить</button></a>
+            <a th:href="@{'/rejectPay?number=' + ${line.number}}"> <button>Удалить </button></a>
         </td>
 
 

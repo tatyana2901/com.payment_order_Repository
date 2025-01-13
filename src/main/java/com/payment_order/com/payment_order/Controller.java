@@ -24,6 +24,8 @@ public class Controller {
     PaymentRepository pr;
     @Autowired
     PaymentService ps;
+    @Autowired
+    FileService fs;
 
     @GetMapping("/")
     public String goToFirstView(Model model) {
@@ -107,7 +109,9 @@ public class Controller {
     }
 
     @GetMapping("/upload_pays.html")
-    String index() {
+    String index(Model model) {
+        List<Payment> list = fs.getList();
+        model.addAttribute("tab_lines", list);
         // System.out.println("тук-тук");
         return "upload_pays";
     }
@@ -133,13 +137,18 @@ public class Controller {
             }
 
             //АНАЛИЗ файла
-            List<Payment> list = ps.getDataFromXlsFile(file);
+            List<Payment> list = fs.getDataFromXlsFile(file);
             model.addAttribute("tab_lines", list);
 
 
             System.out.println(file.delete()); //удаление файла, если он больше не нужен
         }
         return "upload_pays";
+    }
+    @GetMapping("/rejectPay")
+    public String reject(int number) {
+        fs.deleteByNumber(number);
+        return "redirect:/upload_pays.html";
     }
 
 
