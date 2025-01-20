@@ -3,6 +3,7 @@ package com.payment_order.com.payment_order;
 import jxl.read.biff.BiffException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,8 +41,11 @@ public class Controller {
     }
 
     @GetMapping("/added")
-    public String addPayment(String data, String recipient, String sum, String num, String purpose, Model model) {
-        pr.save(ps.add(data, recipient, sum, num, purpose));
+    public String addPayment(String data, String recipient, String sum,
+                             String num, String purpose, Model model) {
+
+            pr.save(ps.getNewPaymentFromEnterForm(data, recipient, sum, num, purpose));
+
 
         return "redirect:/enter-new-pay.html";
     }
@@ -127,6 +131,7 @@ public class Controller {
             model.addAttribute("message", "получен файл " + xfile.getOriginalFilename());
             model.addAttribute("size", xfile.getSize());
             File file = File.createTempFile(xfile.getOriginalFilename(), ".xls");
+            System.out.println(file);
             try {
                 //Сохранение файла на сервере
                 System.out.println("Сохраняем");
@@ -137,6 +142,7 @@ public class Controller {
             }
 
             //АНАЛИЗ файла
+
             List<Payment> list = fs.getDataFromXlsFile(file);
             model.addAttribute("tab_lines", list);
 
@@ -145,11 +151,23 @@ public class Controller {
         }
         return "upload_pays";
     }
+
     @GetMapping("/rejectPay")
     public String reject(int number) {
         fs.deleteByNumber(number);
         return "redirect:/upload_pays.html";
     }
+    @PostMapping("/write_on_database")
+    public String writePaysToDB(Model model){
+
+        pr.saveAll(fs.getList());
+        model.addAttribute("upload_result","В базу загружено платежей:" + fs.getList().size());
+
+        return "upload_pays";
+    }
+
+    //проверить на уникальность платежи, удалить дубли из списка - добавить такую кнопку
+    //добавить в обработчик ошибок еще ситуаций с ошибками
 
 
 }

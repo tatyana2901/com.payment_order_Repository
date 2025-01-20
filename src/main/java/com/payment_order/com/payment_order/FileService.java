@@ -22,8 +22,9 @@ public class FileService {
         return list;
     }
 
+
     public void deleteByNumber(int number) {
-        Optional <Payment> p = list.stream().filter(new Predicate<Payment>() {
+        Optional<Payment> p = list.stream().filter(new Predicate<Payment>() {
             @Override
             public boolean test(Payment payment) {
                 return payment.getNumber() == number;
@@ -45,6 +46,7 @@ public class FileService {
 
     public List<Payment> getDataFromXlsFile(File file) throws BiffException, IOException {
 
+        list.clear();
         Workbook workbook = Workbook.getWorkbook(file);
         Sheet sheet = workbook.getSheet(0);
         int rows = sheet.getRows();

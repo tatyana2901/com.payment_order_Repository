@@ -22,7 +22,7 @@ public class Payment {
     @Column
     @Enumerated(EnumType.STRING)
     private Purpose purpose;
-    @Column
+    @Column(unique=true)
     private int number;
 
     public Payment() {
