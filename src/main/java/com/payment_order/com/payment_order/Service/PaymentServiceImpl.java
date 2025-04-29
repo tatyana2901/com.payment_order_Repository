@@ -56,12 +56,6 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
 
-    public Payment getNewPaymentFromEnterForm(String date, String recipient, String sum, String num, String purpose) {
-        String[] dates = date.split("-");
-        LocalDate ld = LocalDate.of(Integer.parseInt(dates[0]), Integer.parseInt(dates[1]), Integer.parseInt(dates[2]));
-        return new Payment(0, recipient, ld, Double.parseDouble(sum), Purpose.valueOf(purpose), Integer.parseInt(num));
-    }
-
     public Map<String, Double> getSumByRecip(List<Payment> pays) {
         return pays.stream()
                 .collect(Collectors.toMap((Payment::getRecipient), (Payment::getSum), Double::sum
