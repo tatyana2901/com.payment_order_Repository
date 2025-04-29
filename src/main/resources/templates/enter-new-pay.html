@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Добавление платежного поручения</title>
 </head>
 <body>
-<form action="/added">
+<form action="/added" th:object="${payment}">
     Введите реквизиты платежа:
     <br>
-    <label> Дата<input type="date" name="data" required> </label>
+    <label> Дата<input type="date" name="date" required> </label>
     <br>
     <label> Получатель<input type="text" name="recipient" required> </label>
     <br>
     <label>Сумма<input type="number" step="any" name="sum" required></label>
     <br>
-    <label>Номер документа<input type="number" name="num" required></label>
+    <label>Номер документа<input type="number" name="number" required></label>
     <br>
     <label for="purpose-select"> Назначение платежа </label>
     <select name="purpose" id="purpose-select" required>

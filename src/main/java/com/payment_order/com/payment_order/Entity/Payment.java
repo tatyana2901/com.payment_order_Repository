@@ -1,9 +1,9 @@
-package com.payment_order.com.payment_order;
+package com.payment_order.com.payment_order.Entity;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "payment_order")

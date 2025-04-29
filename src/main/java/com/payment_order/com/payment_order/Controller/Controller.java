@@ -1,36 +1,33 @@
-package com.payment_order.com.payment_order;
-
+package com.payment_order.com.payment_order.Controller;
+import com.payment_order.com.payment_order.Entity.Payment;
+import com.payment_order.com.payment_order.Entity.SumByPurpose;
+import com.payment_order.com.payment_order.Entity.SumByRecip;
+import com.payment_order.com.payment_order.Service.FileService;
+import com.payment_order.com.payment_order.Service.FileServiceImpl;
+import com.payment_order.com.payment_order.Service.PaymentService;
 import jxl.read.biff.BiffException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 
 @org.springframework.stereotype.Controller
 public class Controller {
 
     @Autowired
-    PaymentRepository pr;
+    PaymentService paymentService;
     @Autowired
-    PaymentService ps;
-    @Autowired
-    FileService fs;
+    FileService fileService;
 
     @GetMapping("/")
     public String goToFirstView(Model model) {
-        List<Payment> list = pr.findAll();
+        List<Payment> list = paymentService.getAllPays();
         model.addAttribute("tab_lines", list);
         return "first-view";
     }
@@ -41,19 +38,19 @@ public class Controller {
     }
 
     @GetMapping("/added")
-    public String addPayment(String data, String recipient, String sum,
-                             String num, String purpose, Model model) {
+    public String addPayment(Payment payment) {
 
-            pr.save(ps.getNewPaymentFromEnterForm(data, recipient, sum, num, purpose));
+        System.out.println(payment);
 
+            paymentService.addNewPay(payment);
 
         return "redirect:/enter-new-pay.html";
     }
 
     @GetMapping("/report_by_recipient.html")
     public String getRecipientReport(Model model) {
-        var report = pr.totalSumByRecipient();
-        var str = pr.totalSumByRecipient().stream().map((Function<SumByRecip, Object>) sumByRecip -> List.of(sumByRecip.getRecipient(), sumByRecip.getTotal())).toList();
+        var report = paymentService.totalSumByRecipient();
+        var str = paymentService.totalSumByRecipient().stream().map((Function<SumByRecip, Object>) sumByRecip -> List.of(sumByRecip.getRecipient(), sumByRecip.getTotal())).toList();
         model.addAttribute("report", report);
         model.addAttribute("chartData", str);
         return "report_by_recipient";
@@ -61,8 +58,8 @@ public class Controller {
 
     @GetMapping("/report_by_purpose.html")
     public String getPurposeReport(Model model) {
-        var report = pr.totalSumByPurpose();
-        var str = pr.totalSumByPurpose().stream().map((Function<SumByPurpose, Object>) sumByPurpose -> List.of(sumByPurpose.getPurpose(), sumByPurpose.getTotal())).toList();
+        var report = paymentService.totalSumByPurpose();
+        var str = paymentService.totalSumByPurpose().stream().map((Function<SumByPurpose, Object>) sumByPurpose -> List.of(sumByPurpose.getPurpose(), sumByPurpose.getTotal())).toList();
         model.addAttribute("report", report);
         model.addAttribute("chartData", str);
         return "report_by_purpose";
@@ -73,7 +70,7 @@ public class Controller {
     public String saveToFile(Model model) {
         goToFirstView(model);
         try {
-            ps.save("general", pr.findAll());
+            paymentService.save("general", paymentService.getAllPays());
             model.addAttribute("result", "Выгрузка успешно завершена.");
         } catch (IOException e) {
             model.addAttribute("result", e.getMessage());
@@ -86,7 +83,7 @@ public class Controller {
     public String saveByPurp(Model model) {
         getPurposeReport(model);
         try {
-            ps.save("by_purpose", pr.findAll());
+            paymentService.save("by_purpose", paymentService.getAllPays());
             model.addAttribute("purpres", "Выгрузка успешно завершена.");
         } catch (IOException e) {
             model.addAttribute("purpres", e.getMessage());
@@ -98,7 +95,7 @@ public class Controller {
     public String saveByRecip(Model model) {
         getRecipientReport(model);
         try {
-            ps.save("by_recip", pr.findAll());
+            paymentService.save("by_recip", paymentService.getAllPays());
             model.addAttribute("recres", "Выгрузка успешно завершена.");
         } catch (IOException e) {
             model.addAttribute("recres", e.getMessage());
@@ -108,15 +105,14 @@ public class Controller {
 
     @GetMapping("/deletePay")
     public String delete(int id) {
-        pr.deleteById(id);
+        paymentService.deletePay(id);
         return "redirect:/";
     }
 
     @GetMapping("/upload_pays.html")
     String index(Model model) {
-        List<Payment> list = fs.getList();
+        List<Payment> list = fileService.getList();
         model.addAttribute("tab_lines", list);
-        // System.out.println("тук-тук");
         return "upload_pays";
     }
 
@@ -143,7 +139,7 @@ public class Controller {
 
             //АНАЛИЗ файла
 
-            List<Payment> list = fs.getDataFromXlsFile(file);
+            List<Payment> list = fileService.getDataFromXlsFile(file);
             model.addAttribute("tab_lines", list);
 
 
@@ -154,20 +150,18 @@ public class Controller {
 
     @GetMapping("/rejectPay")
     public String reject(int number) {
-        fs.deleteByNumber(number);
+        fileService.deleteByNumber(number);
         return "redirect:/upload_pays.html";
     }
     @PostMapping("/write_on_database")
     public String writePaysToDB(Model model){
 
-        pr.saveAll(fs.getList());
-        model.addAttribute("upload_result","В базу загружено платежей:" + fs.getList().size());
+        paymentService.savePays(fileService.getList());
+        model.addAttribute("upload_result","В базу загружено платежей:" + fileService.getList().size());
 
         return "upload_pays";
     }
 
-    //проверить на уникальность платежи, удалить дубли из списка - добавить такую кнопку
-    //добавить в обработчик ошибок еще ситуаций с ошибками
 
 
 }

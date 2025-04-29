@@ -1,4 +1,5 @@
-package com.payment_order.com.payment_order;
+/*
+package com.payment_order.com.payment_order.Entity;
 
 public class SumRecip {
     private String recipient;
@@ -34,3 +35,4 @@ public class SumRecip {
         this.sum = sum;
     }
 }
+*/

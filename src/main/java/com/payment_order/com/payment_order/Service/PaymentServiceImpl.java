@@ -1,29 +1,60 @@
-package com.payment_order.com.payment_order;
+package com.payment_order.com.payment_order.Service;
 
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
+import com.payment_order.com.payment_order.Entity.Payment;
+import com.payment_order.com.payment_order.Entity.Purpose;
+import com.payment_order.com.payment_order.Entity.SumByPurpose;
+import com.payment_order.com.payment_order.Entity.SumByRecip;
+import com.payment_order.com.payment_order.Repository.PaymentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
-public class PaymentService {
+public class PaymentServiceImpl implements PaymentService{
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Override
+    public List<Payment> getAllPays() {
+        return paymentRepository.findAll();
+    }
+
+    @Override
+    public void addNewPay(Payment payment) {
+        /*Payment payment = getNewPaymentFromEnterForm(data,recipient,sum,num,purpose);*/
+        paymentRepository.save(payment);
+    }
+
+    @Override
+    public List<SumByRecip> totalSumByRecipient() {
+        return paymentRepository.totalSumByRecipient();
+    }
+
+    @Override
+    public List<SumByPurpose> totalSumByPurpose() {
+        return paymentRepository.totalSumByPurpose();
+    }
+
+    @Override
+    public void deletePay(int id) {
+        paymentRepository.deleteById(id);
+    }
+
+    @Override
+    public void savePays(List<Payment> list) {
+        paymentRepository.saveAll(list);
+    }
+
 
     public Payment getNewPaymentFromEnterForm(String date, String recipient, String sum, String num, String purpose) {
         String[] dates = date.split("-");
@@ -66,9 +97,12 @@ public class PaymentService {
                 break;
         }
         Path file = Paths.get(fname);
-        Files.write(file, lines, StandardCharsets.UTF_8);
-    }
 
+
+            Files.write(file, lines, StandardCharsets.UTF_8);
+
+
+    }
 
 
 

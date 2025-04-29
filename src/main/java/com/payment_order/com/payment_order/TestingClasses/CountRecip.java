@@ -1,4 +1,5 @@
-package com.payment_order.com.payment_order;
+/*
+package com.payment_order.com.payment_order.Entity;
 
 public class CountRecip {
     private String recipient;
@@ -33,3 +34,4 @@ public class CountRecip {
                 '}';
     }
 }
+*/

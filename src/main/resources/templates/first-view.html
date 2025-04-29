@@ -9,7 +9,7 @@
 <table border="1" style="width:300px">
     <tr>
         <th>id</th>
-        <th>Номер документа</th>
+        <th>№</th>
         <th>Дата</th>
         <th>Получатель</th>
         <th>Сумма</th>
@@ -19,7 +19,7 @@
 
         <td><span th:text="${line.id}"/></td>
         <td><span th:text="${line.number}"/></td>
-        <td><span th:text="${line.date}"/></td>
+        <td><span th:text="${#temporals.format(line.date,'dd-MM-yyyy')}"/></td>
         <td><span th:text="${line.recipient}"/></td>
         <td><span th:text="${line.sum}"/></td>
         <td><span th:text="${line.purpose}"/></td>

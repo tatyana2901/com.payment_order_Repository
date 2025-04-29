@@ -1,10 +1,10 @@
-package com.payment_order.com.payment_order;
-
+package com.payment_order.com.payment_order.Service;
+import com.payment_order.com.payment_order.Entity.Payment;
+import com.payment_order.com.payment_order.Entity.Purpose;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 @Service
-public class FileService {
+public class FileServiceImpl implements FileService {
 
     private List<Payment> list = new ArrayList<>();
 
@@ -62,11 +62,7 @@ public class FileService {
             if (result == null) {
                 continue;
             }
-           /* System.out.println(dates.length);
-            if (dates.length == 1) {
-                payments.add(payment);
-                break;
-            }*/
+
             LocalDate ld = LocalDate.of(Integer.parseInt(dates[2]), Integer.parseInt(dates[1]), Integer.parseInt(dates[0]));
             String sum = sheet.getCell(6, i).getContents().replaceAll("[\\s|\\u00A0]+", "").replace(",", ".");
             payment.setDate(ld);
