@@ -1,6 +1,6 @@
-package com.payment_order.com.payment_order.Service;
+package com.payment_order.Service;
 
-import com.payment_order.com.payment_order.Entity.Payment;
+import com.payment_order.Entity.Payment;
 import jxl.read.biff.BiffException;
 
 import java.io.File;

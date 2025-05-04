@@ -1,10 +1,7 @@
-package com.payment_order.com.payment_order.Service;
-
-import com.payment_order.com.payment_order.Entity.Payment;
-import com.payment_order.com.payment_order.Entity.Purpose;
-import com.payment_order.com.payment_order.Entity.SumByPurpose;
-import com.payment_order.com.payment_order.Entity.SumByRecip;
-import com.payment_order.com.payment_order.Repository.PaymentRepository;
+package com.payment_order.Service;
+import com.payment_order.Entity.Payment;
+import com.payment_order.Entity.Purpose;
+import com.payment_order.Repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +10,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class PaymentServiceImpl implements PaymentService{
+public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
@@ -31,18 +27,7 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     public void addNewPay(Payment payment) {
-        /*Payment payment = getNewPaymentFromEnterForm(data,recipient,sum,num,purpose);*/
         paymentRepository.save(payment);
-    }
-
-    @Override
-    public List<SumByRecip> totalSumByRecipient() {
-        return paymentRepository.totalSumByRecipient();
-    }
-
-    @Override
-    public List<SumByPurpose> totalSumByPurpose() {
-        return paymentRepository.totalSumByPurpose();
     }
 
     @Override

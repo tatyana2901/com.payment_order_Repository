@@ -1,4 +1,4 @@
-package com.payment_order.com.payment_order;
+package com.payment_order;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

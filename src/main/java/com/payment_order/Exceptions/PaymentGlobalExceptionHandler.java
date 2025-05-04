@@ -1,5 +1,4 @@
-package com.payment_order.com.payment_order.Exceptions;
-
+package com.payment_order.Exceptions;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.payment_order.com.payment_order.Entity;
+package com.payment_order.Entity;
 
 public class SumByRecip {
     private String recipient;

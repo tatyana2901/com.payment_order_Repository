@@ -1,6 +1,6 @@
-package com.payment_order.com.payment_order.Service;
-import com.payment_order.com.payment_order.Entity.Payment;
-import com.payment_order.com.payment_order.Entity.Purpose;
+package com.payment_order.Service;
+import com.payment_order.Entity.Payment;
+import com.payment_order.Entity.Purpose;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;

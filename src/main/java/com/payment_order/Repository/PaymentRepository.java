@@ -1,10 +1,8 @@
-package com.payment_order.com.payment_order.Repository;
+package com.payment_order.Repository;
 
-/*import org.hibernate.mapping.List;*/
-
-import com.payment_order.com.payment_order.Entity.Payment;
-import com.payment_order.com.payment_order.Entity.SumByPurpose;
-import com.payment_order.com.payment_order.Entity.SumByRecip;
+import com.payment_order.Entity.Payment;
+import com.payment_order.Entity.SumByPurpose;
+import com.payment_order.Entity.SumByRecip;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,10 +22,10 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
    /* @Query("SELECT new com.payment_order.com.payment_order.Entity.CountRecip(p.recipient,COUNT(p)) FROM Payment p GROUP BY p.recipient")
     List<CountRecip> sumTotalSumByRecipient();*/
 
-    @Query("SELECT new com.payment_order.com.payment_order.Entity.SumByRecip(p.recipient,SUM(p.sum)) FROM Payment p GROUP BY p.recipient")
+    @Query("SELECT new com.payment_order.Entity.SumByRecip(p.recipient,SUM(p.sum)) FROM Payment p GROUP BY p.recipient")
     List<SumByRecip> totalSumByRecipient();
 
-    @Query("SELECT new com.payment_order.com.payment_order.Entity.SumByPurpose(p.purpose,SUM(p.sum)) FROM Payment p GROUP BY p.purpose")
+    @Query("SELECT new com.payment_order.Entity.SumByPurpose(p.purpose,SUM(p.sum)) FROM Payment p GROUP BY p.purpose")
     List<SumByPurpose> totalSumByPurpose();
 
     @Query("SELECT case when count(p)>0 then true else false end FROM Payment p WHERE p.number = :number")
