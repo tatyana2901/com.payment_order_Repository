@@ -24,14 +24,8 @@
         <td><span th:text="${line.sum}"/></td>
         <td><span th:text="${line.purpose}"/></td>
         <td>
-           <!-- <a th:href="@{/delete(id = ${line.id})}">
-               <button>Удалить</button>
-            </a>ТАК ТОЖЕ МОЖНО!!!!-->
             <a th:href="@{'/deletePay?id=' + ${line.id}}"> <button>Удалить</button></a>
         </td>
-
-
-            <!--  <td><a th:href="@{/delete(id = ${line.id})}"> Удалить </a></td>-->
 
     </tr>
 </table>
@@ -47,7 +41,6 @@
 <a href="upload_pays.html"> Загрузить платежи из файла xls </a>
 <br>
 <br>
-<!--<form action="/load" method="post"><button>Загрузить платежи из файла</button></form>-->
 <br>
 <a href="report_by_recipient.html">
     <button> Свод платежей по получателю</button>

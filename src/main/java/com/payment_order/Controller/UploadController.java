@@ -1,7 +1,7 @@
 package com.payment_order.Controller;
 
 import com.payment_order.Entity.Payment;
-import com.payment_order.Service.FileService;
+import com.payment_order.Service.UploadService;
 import com.payment_order.Service.PaymentService;
 import jxl.read.biff.BiffException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,61 +16,16 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-public class FilesController {
+public class UploadController {
 
     @Autowired
     PaymentService paymentService;
     @Autowired
-    ReportsController reportsController;
-    @Autowired
-    PaymentsController paymentsController;
-    @Autowired
-    FileService fileService;
-
-    @PostMapping("/savepurp")
-    public String saveByPurp(Model model) {
-        //?????
-        reportsController.getPurposeReport(model);
-        try {
-            paymentService.save("by_purpose", paymentService.getAllPays());
-            model.addAttribute("purpres", "Выгрузка успешно завершена.");
-        } catch (IOException e) {
-            model.addAttribute("purpres", e.getMessage());
-        }
-        return "report_by_purpose";
-    }
-
-    @PostMapping("/saverecip")
-    public String saveByRecip(Model model) {
-        //?????
-        reportsController.getRecipientReport(model); //?????
-        try {
-            paymentService.save("by_recip", paymentService.getAllPays());
-            model.addAttribute("recres", "Выгрузка успешно завершена.");
-        } catch (IOException e) {
-            model.addAttribute("recres", e.getMessage());
-        }
-        return "report_by_recipient";
-    }
-
-    @PostMapping("/save")
-    public String saveToFile(Model model) {
-        //???
-        paymentsController.goToFirstView(model);
-        try {
-            paymentService.save("general", paymentService.getAllPays());
-            model.addAttribute("result", "Выгрузка успешно завершена.");
-        } catch (IOException e) {
-            model.addAttribute("result", e.getMessage());
-        }
-
-        return "first-view";
-    }
-
+    UploadService uploadService;
 
     @GetMapping("/upload_pays.html")
     String index(Model model) {
-        List<Payment> list = fileService.getList();
+        List<Payment> list = uploadService.getList();
         model.addAttribute("tab_lines", list);
         return "upload_pays";
     }
@@ -98,7 +53,7 @@ public class FilesController {
 
             //АНАЛИЗ файла
 
-            List<Payment> list = fileService.getDataFromXlsFile(file);
+            List<Payment> list = uploadService.getDataFromXlsFile(file);
             model.addAttribute("tab_lines", list);
 
 
@@ -109,15 +64,15 @@ public class FilesController {
 
     @GetMapping("/rejectPay")
     public String reject(int number) {
-        fileService.deleteByNumber(number);
+        uploadService.deleteByNumber(number);
         return "redirect:/upload_pays.html";
     }
 
     @PostMapping("/write_on_database")
     public String writePaysToDB(Model model) {
 
-        paymentService.savePays(fileService.getList());
-        model.addAttribute("upload_result", "В базу загружено платежей:" + fileService.getList().size());
+        paymentService.savePays(uploadService.getList());
+        model.addAttribute("upload_result", "В базу загружено платежей:" + uploadService.getList().size());
 
         return "upload_pays";
     }

@@ -1,8 +1,7 @@
 package com.payment_order.Service;
 
 import com.payment_order.Entity.Payment;
-import com.payment_order.Entity.SumByPurpose;
-import com.payment_order.Entity.SumByRecip;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -15,6 +14,8 @@ public interface PaymentService {
 
     public void savePays(List<Payment> list);
 
-    public void save(String general, List<Payment> allPays) throws IOException;
+    public void exportGeneralPayments(List<Payment> pays) throws IOException;
+
+
 }
 

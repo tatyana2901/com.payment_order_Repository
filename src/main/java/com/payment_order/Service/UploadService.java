@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public interface FileService {
+public interface UploadService {
    public List<Payment> getList();
 
     public List<Payment> getDataFromXlsFile(File file) throws BiffException, IOException;

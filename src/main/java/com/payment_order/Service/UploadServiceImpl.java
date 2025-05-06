@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 @Service
-public class FileServiceImpl implements FileService {
+public class UploadServiceImpl implements UploadService {
 
     private List<Payment> list = new ArrayList<>();
 
