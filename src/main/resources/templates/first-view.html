@@ -16,8 +16,6 @@
         <th>Назначение платежа</th>
     </tr>
     <tr th:each="line : ${tab_lines}">
-
-        <td><span th:text="${line.id}"/></td>
         <td><span th:text="${line.number}"/></td>
         <td><span th:text="${#temporals.format(line.date,'dd-MM-yyyy')}"/></td>
         <td><span th:text="${line.recipient}"/></td>
@@ -33,7 +31,7 @@
 <form action="/save" method="post">
     <button>Выгрузить журнал платежей</button>
 </form>
-<span th:text="${result}"></span>
+<span th:text="${reportDTO}"></span>
 <br>
 <a href="enter-new-pay.html"> Добавить платеж </a>
 <br>

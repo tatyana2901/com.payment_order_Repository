@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -44,7 +45,7 @@ public class ReportsController {
     public String saveByPurp(RedirectAttributes redirectAttributes) {
 
         try {
-            reportService.exportPaymentsByPurpose(paymentService.getAllPays());
+            reportService.exportPaymentsByPurpose(new ArrayList<>()); //исправить
             redirectAttributes.addFlashAttribute("purpres", "Выгрузка успешно завершена.");
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("purpres", e.getMessage());
@@ -56,7 +57,7 @@ public class ReportsController {
     public String saveByRecip(RedirectAttributes redirectAttributes) {
 
         try {
-            reportService.exportPaymentsByRecipient(paymentService.getAllPays());
+            reportService.exportPaymentsByRecipient(new ArrayList<>());//исправить
             redirectAttributes.addFlashAttribute("recres", "Выгрузка успешно завершена.");
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("recres", e.getMessage());

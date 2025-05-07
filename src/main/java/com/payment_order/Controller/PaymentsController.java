@@ -1,5 +1,7 @@
 package com.payment_order.Controller;
 
+import com.payment_order.DTO.PaymentDTO;
+import com.payment_order.DTO.ReportDTO;
 import com.payment_order.Entity.Payment;
 import com.payment_order.Service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ public class PaymentsController {
 
     @GetMapping("/")
     public String goToFirstView(Model model) {
-        List<Payment> list = paymentService.getAllPays();
+        List<PaymentDTO> list = paymentService.getAllPays();
         model.addAttribute("tab_lines", list);
         return "first-view";
     }
@@ -30,28 +32,25 @@ public class PaymentsController {
         return "enter-new-pay";
     }
 
-    @GetMapping("/added")
-    public String addPayment(Payment payment) {
-        paymentService.addNewPay(payment);
+    @PostMapping("/added")
+    public String addPayment(PaymentDTO paymentDTO) {
+        paymentService.addNewPay(paymentDTO);
         return "redirect:/enter-new-pay.html";
     }
 
     @GetMapping("/deletePay")
     public String delete(int id) {
+        System.out.println("РАБОТАЕТ МЕТОД ДЕЛИТ");
+        System.out.println(id);
         paymentService.deletePay(id);
+
         return "redirect:/";
     }
 
     @PostMapping("/save")
     public String saveToFile(RedirectAttributes redirectAttributes) {
-        try {
-            // исправить заменить на DTO
-            paymentService.exportGeneralPayments(paymentService.getAllPays());
-            redirectAttributes.addFlashAttribute("result", "Выгрузка успешно завершена."); //добавляем новые атрибуты при переходе на главную страницу,чтобы не перезаполнять список платежей
-        } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("result", e.getMessage());
-        }
-
+        ReportDTO reportDTO = paymentService.exportGeneralPayments();
+        redirectAttributes.addFlashAttribute("reportDTO", reportDTO.getExportResult()); //добавляем новые атрибуты при переходе на главную страницу,чтобы не перезаполнять список платежей
         return "redirect:/";
     }
 

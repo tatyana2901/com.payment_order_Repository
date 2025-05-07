@@ -5,7 +5,7 @@
     <title>Добавление платежного поручения</title>
 </head>
 <body>
-<form action="/added" th:object="${payment}">
+<form action="/added" th:object="${paymentDTO}" method="post">
     Введите реквизиты платежа:
     <br>
     <label> Дата<input type="date" name="date" required> </label>
