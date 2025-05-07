@@ -1,5 +1,6 @@
 package com.payment_order.Service;
 
+import com.payment_order.DTO.ReportDTO;
 import com.payment_order.Entity.Payment;
 import com.payment_order.Entity.Purpose;
 import com.payment_order.Entity.SumByPurpose;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 public class ReportServiceImpl implements ReportService {
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
+    ReportDTO reportDTO;
 
     @Override
     public List<SumByRecip> totalSumByRecipient() {
@@ -49,33 +52,46 @@ public class ReportServiceImpl implements ReportService {
 
     public Map<String, Double> getSumByRecip(List<Payment> pays) {
         return pays.stream()
-                .collect(Collectors.toMap((Payment::getRecipient), (Payment::getSum), Double::sum
-                ));
+                .collect(Collectors.toMap((Payment::getRecipient), (Payment::getSum), Double::sum));
     }
 
     public Map<Purpose, Double> getSumByPurp(List<Payment> pays) {
-        return
-                pays.stream()
-                        .collect(Collectors.toMap((Payment::getPurpose), (Payment::getSum), Double::sum
-                        ));
+        return pays.stream()
+                .collect(Collectors.toMap((Payment::getPurpose), (Payment::getSum), Double::sum));
 
     }
 
     @Override
-    public void exportPaymentsByPurpose(List<Payment> pays) throws IOException {
-        String fname = "payments_by_purpose.txt";
-        List<String> lines = getSumByPurp(pays).entrySet().stream().map(enumDoubleEntry -> enumDoubleEntry.getKey().toString() + ";" + enumDoubleEntry.getValue().toString()).toList();
-        FileUtils.saveToFile(fname, lines); //обработать исключения
+    public ReportDTO exportPaymentsByPurpose() {
+        String fileName = reportDTO.getPurposeReportFile();
+        List<String> lines = getSumByPurp(paymentRepository.findAll()).entrySet().stream()
+                .map(enumDoubleEntry -> enumDoubleEntry.getKey().toString() + ";" + enumDoubleEntry.getValue().toString())
+                .toList();
+        try {
+            FileUtils.saveToFile(fileName, lines);
+            reportDTO.setExportResult("Выгрузка успешно завершена");
+        } catch (IOException e) {
+            reportDTO.setExportResult(e.getMessage());
+            return reportDTO;
+        }
+        return reportDTO;
     }
 
     @Override
-    public void exportPaymentsByRecipient(List<Payment> pays) throws IOException {
-        String fname = "payments_by_recipient.txt";
-        List<String> lines = getSumByRecip(pays).entrySet()
+    public ReportDTO exportPaymentsByRecipient() {
+        String fileName = reportDTO.getRecipientReportFile();
+        List<String> lines = getSumByRecip(paymentRepository.findAll()).entrySet()
                 .stream()
                 .map(x -> x.getKey() + ";" + x.getValue().toString())
                 .toList();
-        FileUtils.saveToFile(fname, lines); //обработать исключения
+        try {
+            FileUtils.saveToFile(fileName, lines);
+            reportDTO.setExportResult("Выгрузка успешно завершена");
+        } catch (IOException e) {
+            reportDTO.setExportResult(e.getMessage());
+            return reportDTO;
+        }
+        return reportDTO;
     }
 
 

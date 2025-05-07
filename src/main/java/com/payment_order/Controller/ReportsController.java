@@ -1,5 +1,6 @@
 package com.payment_order.Controller;
 
+import com.payment_order.DTO.ReportDTO;
 import com.payment_order.Entity.SumByPurpose;
 import com.payment_order.Entity.SumByRecip;
 import com.payment_order.Service.PaymentService;
@@ -43,25 +44,15 @@ public class ReportsController {
 
     @PostMapping("/savepurp")
     public String saveByPurp(RedirectAttributes redirectAttributes) {
-
-        try {
-            reportService.exportPaymentsByPurpose(new ArrayList<>()); //исправить
-            redirectAttributes.addFlashAttribute("purpres", "Выгрузка успешно завершена.");
-        } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("purpres", e.getMessage());
-        }
+        ReportDTO reportDTO = reportService.exportPaymentsByPurpose();
+        redirectAttributes.addFlashAttribute("purpres", reportDTO.getExportResult());
         return "redirect:/report_by_purpose.html";
     }
 
     @PostMapping("/saverecip")
     public String saveByRecip(RedirectAttributes redirectAttributes) {
-
-        try {
-            reportService.exportPaymentsByRecipient(new ArrayList<>());//исправить
-            redirectAttributes.addFlashAttribute("recres", "Выгрузка успешно завершена.");
-        } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("recres", e.getMessage());
-        }
+        ReportDTO reportDTO = reportService.exportPaymentsByRecipient();
+        redirectAttributes.addFlashAttribute("recres", reportDTO.getExportResult());
         return "redirect:/report_by_recipient.html";
     }
 

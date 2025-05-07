@@ -40,10 +40,7 @@ public class PaymentsController {
 
     @GetMapping("/deletePay")
     public String delete(int id) {
-        System.out.println("РАБОТАЕТ МЕТОД ДЕЛИТ");
-        System.out.println(id);
         paymentService.deletePay(id);
-
         return "redirect:/";
     }
 
