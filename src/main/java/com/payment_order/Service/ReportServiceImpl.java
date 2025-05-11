@@ -1,30 +1,27 @@
 package com.payment_order.Service;
 
 import com.payment_order.DTO.ReportDTO;
-import com.payment_order.Entity.Payment;
-import com.payment_order.Entity.Purpose;
 import com.payment_order.Entity.SumByPurpose;
 import com.payment_order.Entity.SumByRecip;
 import com.payment_order.Repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
 
 @Service
 public class ReportServiceImpl implements ReportService {
     @Autowired
     PaymentRepository paymentRepository;
-    @Autowired
-    ReportDTO reportDTO;
+    @Value("${report.recipient.file}")
+    private String recipientReportFile;
+    @Value("${report.purpose.file}")
+    private String purposeReportFile;
+
 
     @Override
     public List<SumByRecip> totalSumByRecipient() {
@@ -50,48 +47,36 @@ public class ReportServiceImpl implements ReportService {
                 .toList();
     }
 
-    public Map<String, Double> getSumByRecip(List<Payment> pays) {
-        return pays.stream()
-                .collect(Collectors.toMap((Payment::getRecipient), (Payment::getSum), Double::sum));
-    }
-
-    public Map<Purpose, Double> getSumByPurp(List<Payment> pays) {
-        return pays.stream()
-                .collect(Collectors.toMap((Payment::getPurpose), (Payment::getSum), Double::sum));
-
-    }
-
     @Override
     public ReportDTO exportPaymentsByPurpose() {
-        String fileName = reportDTO.getPurposeReportFile();
-        List<String> lines = getSumByPurp(paymentRepository.findAll()).entrySet().stream()
-                .map(enumDoubleEntry -> enumDoubleEntry.getKey().toString() + ";" + enumDoubleEntry.getValue().toString())
-                .toList();
         try {
-            FileUtils.saveToFile(fileName, lines);
-            reportDTO.setExportResult("Выгрузка успешно завершена");
+            return FileUtils.saveToFile(purposeReportFile, generatePaymentsByPurposeReport());
         } catch (IOException e) {
-            reportDTO.setExportResult(e.getMessage());
-            return reportDTO;
+            return new ReportDTO(e.getMessage());
         }
-        return reportDTO;
     }
 
     @Override
     public ReportDTO exportPaymentsByRecipient() {
-        String fileName = reportDTO.getRecipientReportFile();
-        List<String> lines = getSumByRecip(paymentRepository.findAll()).entrySet()
-                .stream()
-                .map(x -> x.getKey() + ";" + x.getValue().toString())
-                .toList();
         try {
-            FileUtils.saveToFile(fileName, lines);
-            reportDTO.setExportResult("Выгрузка успешно завершена");
+            return FileUtils.saveToFile(recipientReportFile, generatePaymentsByRecipientReport());
         } catch (IOException e) {
-            reportDTO.setExportResult(e.getMessage());
-            return reportDTO;
+            return new ReportDTO(e.getMessage());
         }
-        return reportDTO;
+    }
+
+    public List<String> generatePaymentsByRecipientReport() {
+        List<String> lines = totalSumByRecipient().stream()
+                .map(x -> x.getRecipient() + ";" + x.getTotal())
+                .toList();
+        return lines;
+    }
+
+    public List<String> generatePaymentsByPurposeReport() {
+        List<String> lines = totalSumByPurpose().stream()
+                .map(x -> x.getPurpose() + ";" + x.getTotal())
+                .toList();
+        return lines;
     }
 
 

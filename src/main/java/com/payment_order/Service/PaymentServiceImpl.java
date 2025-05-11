@@ -6,22 +6,23 @@ import com.payment_order.Entity.Payment;
 import com.payment_order.Repository.PaymentRepository;
 import com.payment_order.mapper.PaymentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
+    @Value("${report.general.file}")
+    private String generalReportFile;
     @Autowired
     private PaymentRepository paymentRepository;
     @Autowired
     private PaymentMapper paymentMapper;
-    @Autowired
-    private ReportDTO reportDTO;
+
 
     @Override
     public List<PaymentDTO> getAllPays() {
@@ -50,19 +51,18 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ReportDTO exportGeneralPayments() {
-        String fileName = reportDTO.getGeneralReportFile();
+        try {
+            return FileUtils.saveToFile(generalReportFile, generateGeneralPayments());
+        } catch (IOException e) {
+            return new ReportDTO(e.getMessage());
+        }
+    }
+
+    public List<String> generateGeneralPayments() {
         List<String> lines = paymentRepository.findAll().stream()
                 .map(payment -> payment.getNumber() + ";" + payment.getDate() + ";" + payment.getSum() + ";" + payment.getRecipient() + ";" + payment.getPurpose())
                 .toList();
-        try {
-            FileUtils.saveToFile(fileName, lines);
-            reportDTO.setExportResult("Выгрузка успешно завершена");
-        } catch (IOException e) {
-            reportDTO.setExportResult(e.getMessage());
-            return reportDTO;
-        }
-        return reportDTO;
-
+        return lines;
     }
 
 
