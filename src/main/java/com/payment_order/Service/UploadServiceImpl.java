@@ -1,17 +1,14 @@
 package com.payment_order.Service;
+
 import com.payment_order.Entity.Payment;
 import com.payment_order.Entity.Purpose;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
 import org.springframework.stereotype.Service;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 @Service
 public class UploadServiceImpl implements UploadService {
@@ -24,56 +21,46 @@ public class UploadServiceImpl implements UploadService {
 
 
     public void deleteByNumber(int number) {
-        Optional<Payment> p = list.stream().filter(new Predicate<Payment>() {
-            @Override
-            public boolean test(Payment payment) {
-                return payment.getNumber() == number;
-            }
-        }).findFirst();
+        Optional<Payment> p = list.stream()
+                .filter(payment -> payment.getNumber() == number)
+                .findFirst();
         p.ifPresent(payment -> list.remove(payment));
     }
 
-    public Purpose parsePurpose(String string) {
-
-        return switch (string) {
-            case "Оплата поставщику" -> Purpose.SUPPLIER_PAYMENT;
-            case "Уплата налога" -> Purpose.TAX;
-            case "Перечисление заработной платы работнику" -> Purpose.SALARY;
-            case "Банковские операции" -> Purpose.BANK_TRANSACTION;
-            default -> null;
-        };
-    }
-
-    public List<Payment> getDataFromXlsFile(File file) throws BiffException, IOException {
+    //ОБРАБОТАТЬ ВОЗМОНЫЕ ОШИБКИ
+    public List<Payment> getDataFromFile(File file)  {
 
         list.clear();
-        Workbook workbook = Workbook.getWorkbook(file);
-        Sheet sheet = workbook.getSheet(0);
-        int rows = sheet.getRows();
-        System.out.println(rows);
-
-        for (int i = 1; i < rows; i++) {
-            Payment payment = new Payment();
-            String date = sheet.getCell(1, i).getContents();
-            String[] dates = date.split("\\.");
-
-            String purpose = sheet.getCell(9, i).getContents();
-            Purpose result = parsePurpose(purpose);
-            if (result == null) {
-                continue;
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] item = line.split(";");
+                list.add(stringToPayment(item));
             }
-
-            LocalDate ld = LocalDate.of(Integer.parseInt(dates[2]), Integer.parseInt(dates[1]), Integer.parseInt(dates[0]));
-            String sum = sheet.getCell(6, i).getContents().replaceAll("[\\s|\\u00A0]+", "").replace(",", ".");
-            payment.setDate(ld);
-            payment.setNumber(Integer.parseInt(sheet.getCell(3, i).getContents()));
-            payment.setSum(Double.valueOf(sum));
-            payment.setRecipient(sheet.getCell(8, i).getContents());
-            payment.setPurpose(result);
-            list.add(payment);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return list;
+    }
 
+    public Payment stringToPayment(String[] line) {
+
+        Payment payment = new Payment();
+
+        int number = Integer.parseInt(line[0]);
+        LocalDate date = LocalDate.parse(line[1]);
+        double sum = Double.parseDouble(line[2]);
+        String recipient = line[3];
+        Purpose purpose = Purpose.valueOf(line[4]);
+
+        payment.setDate(date);
+        payment.setNumber(number);
+        payment.setSum(sum);
+        payment.setPurpose(purpose);
+        payment.setRecipient(recipient);
+
+        System.out.println(payment);
+        return payment;
 
     }
 }

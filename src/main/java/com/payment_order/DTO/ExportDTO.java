@@ -1,11 +1,11 @@
 package com.payment_order.DTO;
 
 
-public class ReportDTO {
+public class ExportDTO {
 
     private final String exportResult;
 
-    public ReportDTO(String exportResult) {
+    public ExportDTO(String exportResult) {
         this.exportResult = exportResult;
     }
 

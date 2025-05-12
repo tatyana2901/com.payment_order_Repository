@@ -1,12 +1,12 @@
 package com.payment_order.Service;
 
-import com.payment_order.DTO.ReportDTO;
+import com.payment_order.DTO.ExportDTO;
 
 public interface ExportReportService {
 
-    public ReportDTO exportGeneralPayments();
+    public ExportDTO exportGeneralPayments();
 
-    public ReportDTO exportPaymentsByPurpose();
+    public ExportDTO exportPaymentsByPurpose();
 
-    public ReportDTO exportPaymentsByRecipient();
+    public ExportDTO exportPaymentsByRecipient();
 }
