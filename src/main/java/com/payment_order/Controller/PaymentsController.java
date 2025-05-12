@@ -3,6 +3,7 @@ package com.payment_order.Controller;
 import com.payment_order.DTO.PaymentDTO;
 import com.payment_order.DTO.ReportDTO;
 import com.payment_order.Entity.Payment;
+import com.payment_order.Service.ExportReportService;
 import com.payment_order.Service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,8 @@ public class PaymentsController {
 
     @Autowired
     PaymentService paymentService;
+    @Autowired
+    ExportReportService exportReportService;
 
     @GetMapping("/")
     public String goToFirstView(Model model) {
@@ -46,7 +49,7 @@ public class PaymentsController {
 
     @PostMapping("/save")
     public String saveToFile(RedirectAttributes redirectAttributes) {
-        ReportDTO reportDTO = paymentService.exportGeneralPayments();
+        ReportDTO reportDTO = exportReportService.exportGeneralPayments();
         redirectAttributes.addFlashAttribute("reportDTO", reportDTO.getExportResult()); //добавляем новые атрибуты при переходе на главную страницу,чтобы не перезаполнять список платежей
         return "redirect:/";
     }

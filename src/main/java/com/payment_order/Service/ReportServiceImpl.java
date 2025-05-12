@@ -1,14 +1,11 @@
 package com.payment_order.Service;
 
-import com.payment_order.DTO.ReportDTO;
 import com.payment_order.Entity.SumByPurpose;
 import com.payment_order.Entity.SumByRecip;
 import com.payment_order.Repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -17,10 +14,6 @@ import java.util.function.Function;
 public class ReportServiceImpl implements ReportService {
     @Autowired
     PaymentRepository paymentRepository;
-    @Value("${report.recipient.file}")
-    private String recipientReportFile;
-    @Value("${report.purpose.file}")
-    private String purposeReportFile;
 
 
     @Override
@@ -48,23 +41,6 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ReportDTO exportPaymentsByPurpose() {
-        try {
-            return FileUtils.saveToFile(purposeReportFile, generatePaymentsByPurposeReport());
-        } catch (IOException e) {
-            return new ReportDTO(e.getMessage());
-        }
-    }
-
-    @Override
-    public ReportDTO exportPaymentsByRecipient() {
-        try {
-            return FileUtils.saveToFile(recipientReportFile, generatePaymentsByRecipientReport());
-        } catch (IOException e) {
-            return new ReportDTO(e.getMessage());
-        }
-    }
-
     public List<String> generatePaymentsByRecipientReport() {
         List<String> lines = totalSumByRecipient().stream()
                 .map(x -> x.getRecipient() + ";" + x.getTotal())
@@ -72,6 +48,7 @@ public class ReportServiceImpl implements ReportService {
         return lines;
     }
 
+    @Override
     public List<String> generatePaymentsByPurposeReport() {
         List<String> lines = totalSumByPurpose().stream()
                 .map(x -> x.getPurpose() + ";" + x.getTotal())

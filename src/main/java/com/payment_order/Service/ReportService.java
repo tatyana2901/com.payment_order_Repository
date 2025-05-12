@@ -18,7 +18,9 @@ public interface ReportService {
 
     public List<Object> getSumByRecipientChartData();
 
-    public ReportDTO exportPaymentsByPurpose();
+    public List<String> generatePaymentsByPurposeReport();
 
-    public ReportDTO exportPaymentsByRecipient();
+    public List<String> generatePaymentsByRecipientReport();
+
+
 }

@@ -16,7 +16,7 @@ public interface PaymentService {
 
     public void savePays(List<Payment> list);
 
-    public ReportDTO exportGeneralPayments();
+    public List<String> generateGeneralPayments();
 
 
 }

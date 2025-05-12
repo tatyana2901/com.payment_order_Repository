@@ -1,23 +1,19 @@
 package com.payment_order.Service;
 
 import com.payment_order.DTO.PaymentDTO;
-import com.payment_order.DTO.ReportDTO;
 import com.payment_order.Entity.Payment;
 import com.payment_order.Repository.PaymentRepository;
 import com.payment_order.mapper.PaymentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    @Value("${report.general.file}")
-    private String generalReportFile;
+
     @Autowired
     private PaymentRepository paymentRepository;
     @Autowired
@@ -50,14 +46,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ReportDTO exportGeneralPayments() {
-        try {
-            return FileUtils.saveToFile(generalReportFile, generateGeneralPayments());
-        } catch (IOException e) {
-            return new ReportDTO(e.getMessage());
-        }
-    }
-
     public List<String> generateGeneralPayments() {
         List<String> lines = paymentRepository.findAll().stream()
                 .map(payment -> payment.getNumber() + ";" + payment.getDate() + ";" + payment.getSum() + ";" + payment.getRecipient() + ";" + payment.getPurpose())
