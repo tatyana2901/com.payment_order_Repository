@@ -1,8 +1,11 @@
 package com.payment_order.Service;
 
+import com.payment_order.DTO.UploadRequestDTO;
+import com.payment_order.DTO.UploadResponseDTO;
 import com.payment_order.Entity.Payment;
 import com.payment_order.Entity.Purpose;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -27,21 +30,44 @@ public class UploadServiceImpl implements UploadService {
         p.ifPresent(payment -> list.remove(payment));
     }
 
-    //ОБРАБОТАТЬ ВОЗМОНЫЕ ОШИБКИ
-    public List<Payment> getDataFromFile(File file)  {
+    //ОБРАБОТАТЬ ВОЗМОНЫЕ ОШИБКИ и ВОЗМОЖНО РАЗДЕЛИТЬ МЕТОД НА ДВА МЕТОДА
+    public UploadResponseDTO getDataFromFile(UploadRequestDTO uploadRequestDTO) {
+        MultipartFile xfile = uploadRequestDTO.getMultipartFile();
+        UploadResponseDTO uploadResponseDTO = new UploadResponseDTO();
 
-        list.clear();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                String[] item = line.split(";");
-                list.add(stringToPayment(item));
+        if (xfile == null || xfile.isEmpty()) {
+            uploadResponseDTO.setMessage("файл не найден!");
+            return uploadResponseDTO;
+
+        } else {
+            uploadResponseDTO.setMessage("получен файл " + xfile.getOriginalFilename());
+            uploadResponseDTO.setSize(xfile.getSize());
+            File file = null;
+            try {
+                //Сохранение файла на сервере
+                file = File.createTempFile("payments_", "");
+                xfile.transferTo(file);
+            } catch (IOException e) {
+                uploadResponseDTO.setErrorMessage("не удалось сохранить файл: " + e.getMessage());
+                return uploadResponseDTO;
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            //АНАЛИЗ файла
+            list.clear();
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    String[] item = line.split(";");
+                    list.add(stringToPayment(item));
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            System.out.println(file.delete());  //удаление файла, если он больше не нужен
         }
-        return list;
+        return uploadResponseDTO;
     }
+
 
     public Payment stringToPayment(String[] line) {
 

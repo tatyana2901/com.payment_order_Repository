@@ -5,15 +5,22 @@
     <title>Форма загрузки файла</title>
 </head>
 <body>
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name = "xfile">
+<form action="/upload" method="post" enctype="multipart/form-data" th:object="${requestDTO}">
+    <label for="fileInput">Выберите файл:</label>
+    <input type="file" id="fileInput" name="multipartFile"  />
+    <br/>
     <input type="submit" value="Загрузить">
 </form>
 <br>
 <br>
-<p th:if = "${message != null}"><span th:text="${message}"/> </p>
-<p th:if = "${size != null}">Размер файла: <span th:text="${size}"/> </p>
-<p th:if = "${errorMessage != null}"><span th:text="${errorMessage}"/> </p>
+<div th:if="${response != null}">
+    <h3>Результат загрузки:</h3>
+    <ul>
+        <li th:if="${response.message != null}">Сообщение: <span th:text="${response.message}"></span></li>
+        <li th:if="${response.size != null}">Размер файла: <span th:text="${response.size}" ></span> байт</li>
+        <li th:if="${response.errorMessage != null}">Ошибка: <span th:text="${response.errorMessage}"></span></li>
+    </ul>
+</div>
 </body>
 
 <table border="1" style="width:300px">

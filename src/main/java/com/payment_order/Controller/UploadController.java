@@ -1,5 +1,7 @@
 package com.payment_order.Controller;
 
+import com.payment_order.DTO.UploadRequestDTO;
+import com.payment_order.DTO.UploadResponseDTO;
 import com.payment_order.Entity.Payment;
 import com.payment_order.Service.UploadService;
 import com.payment_order.Service.PaymentService;
@@ -8,10 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -30,32 +29,11 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public String doUpload(MultipartFile xfile, Model model) throws IOException {
-        if (xfile == null || xfile.isEmpty()) {
-
-            model.addAttribute("message", "нет файла");
-        } else {
-
-            model.addAttribute("message", "получен файл " + xfile.getOriginalFilename());
-            model.addAttribute("size", xfile.getSize());
-            File file = File.createTempFile("payments_", "");
-
-            try {
-                //Сохранение файла на сервере
-
-                xfile.transferTo(file);
-            } catch (IOException e) {
-
-                model.addAttribute("errorMessage", "не удалось сохранить файл: " + e.getMessage());
-            }
-
-            //АНАЛИЗ файла
-
-            List<Payment> list = uploadService.getDataFromFile(file);
-            model.addAttribute("tab_lines", list);
-
-            System.out.println(file.delete());  //удаление файла, если он больше не нужен
-        }
+    public String doUpload(UploadRequestDTO requestDTO, Model model) { //добавить валидацию???
+        UploadResponseDTO uploadResponseDTO = uploadService.getDataFromFile(requestDTO);
+        List<Payment> payments = uploadService.getList();
+        model.addAttribute("tab_lines", payments);
+        model.addAttribute("response", uploadResponseDTO);
         return "upload_pays";
     }
 
